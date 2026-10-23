@@ -1,0 +1,23 @@
+services:
+  promptcentral:
+    build: .
+    restart: unless-stopped
+    environment:
+      # Tells Coolify to generate a domain and route it to port 3000 (you can change the domain in the UI).
+      - SERVICE_FQDN_PROMPTCENTRAL_3000
+      # Coolify shows these in the app's Environment Variables tab.
+      - APP_PASSWORD=${APP_PASSWORD:-2511}
+      - SESSION_SECRET=${SESSION_SECRET:-}
+    volumes:
+      - promptcentral-data:/data
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  promptcentral-data:
